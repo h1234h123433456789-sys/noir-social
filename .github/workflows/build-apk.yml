@@ -17,7 +17,7 @@ jobs:
       - name: Extract Android project
         run: |
           mkdir -p project
-          unzip -q NoirSocial-Firebase-Ready.zip -d project
+          unzip -q NoirSocial-Firebase-Ready-FIXED.zip -d project
           echo "Project extracted successfully"
           ls -la project/NoirSocial
 
