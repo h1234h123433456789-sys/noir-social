@@ -1,0 +1,48 @@
+name: Build Noir Social APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract Android project
+        run: |
+          unzip -q NoirSocial-Firebase-Ready.zip -d project
+          echo "Project contents:"
+          find project -maxdepth 3 -type f | head -50
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Make Gradle executable
+        run: chmod +x project/NoirSocial/gradlew 2>/dev/null || true
+
+      - name: Build APK
+        working-directory: project/NoirSocial
+        run: |
+          if [ -f "./gradlew" ]; then
+            ./gradlew assembleDebug --stacktrace
+          else
+            gradle assembleDebug --stacktrace
+          fi
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: NoirSocial-debug-apk
+          path: project/NoirSocial/app/build/outputs/apk/debug/*.apk
