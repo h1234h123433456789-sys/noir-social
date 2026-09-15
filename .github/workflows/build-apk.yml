@@ -18,10 +18,10 @@ jobs:
         run: |
           mkdir -p project
           unzip -q NoirSocial-Firebase-Ready.zip -d project
-          echo "Project files:"
-          find project/NoirSocial -maxdepth 3 -type f | head -100
+          echo "Project extracted successfully"
+          ls -la project/NoirSocial
 
-      - name: Setup Java 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -29,20 +29,15 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-
-      - name: Install Android SDK
-        run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platform-tools"
-          sdkmanager "platforms;android-36"
-          sdkmanager "build-tools;36.0.0"
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.1.0'
 
-      - name: Build Debug APK
+      - name: Build APK
         working-directory: project/NoirSocial
         run: |
           gradle assembleDebug --stacktrace
